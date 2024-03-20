@@ -35,9 +35,10 @@ export class AppController {
 
   @EventPattern('market-set-event')
   public handleMarketSet(data: Record<string, unknown>): Promise<void> {
-    Logger.log(data);
+    Logger.log('data market-set-event');
 
-    this.chatGateway.server.sockets.emit('market-set', data);
+    this.socket.emit('market-set', data);
+    // this.chatGateway.sendData('market-set', data);
     return Promise.resolve();
   }
 }

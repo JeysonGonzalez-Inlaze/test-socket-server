@@ -1,7 +1,9 @@
 import { NestFactory } from '@nestjs/core';
+
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ChatGateway } from './chat/chat.gateway';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function bootstrap() {
   /* Hybrid App */
@@ -35,9 +37,10 @@ async function bootstrap() {
 
   // Create Nest.js application instance for WebSocket
   const wsApp = await NestFactory.create(ChatGateway);
-
-  // Start Kafka microservice
-  // await app.listenAsync();
+  wsApp.enableCors({
+    origin: 'http://localhost:3002', // Permite solicitudes solo desde http://localhost:3002
+  });
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   // Start WebSocket server
   await wsApp.listen(3001); // Adjust port as needed

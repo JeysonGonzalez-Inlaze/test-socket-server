@@ -7,10 +7,12 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets/interfaces';
+import { Server } from 'socket.io';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server;
+  @WebSocketServer()
+  server: Server;
   users: number = 0;
 
   async handleConnection() {
@@ -43,5 +45,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('market-set')
   async onMarketSet(client, data) {
     client.broadcast.emit('market-set', data);
+  }
+
+  async sendData(event, data) {
+    console.log({ event });
+    this.server.emit(event, data);
   }
 }
